@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список заказов</title>
+</head>
+<body>
+    <h2>Список заказов</h2>
+    <ul>
+        {% for basket in baskets %}
+            <li>
+                {{ basket.full_name }} - {{ basket.book.title }} - {{ basket.status }}
+                <a href="{% url 'update_basket' basket.pk %}">Изменить</a>
+                <a href="{% url 'delete_basket' basket.pk %}">Удалить</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'create_basket' %}">Создать новый заказ</a>
+</body>
+</html>
