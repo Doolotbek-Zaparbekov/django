@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фильтрация по тегам</title>
+</head>
+<body>
+    <h2>Фильтрация по тегам:</h2>
+<ul>
+    {% for tag in tags %}
+        <li><a href="?tag={{ tag.name }}">#{{ tag.name }}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Список товаров:</h3>
+<ul>
+    {% for product in products %}
+        <li>
+            <strong>{{ product.name }}</strong><br>
+            {{ product.description }}<br>
+            Теги: 
+            {% for tag in product.tags.all %}
+                #{{ tag.name }} 
+            {% endfor %}
+        </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

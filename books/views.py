@@ -5,6 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from .models import NewsBook
 from django.db.models import Avg 
+from.models import Book
+from django.core.paginator import Paginator
 
 
 
@@ -15,6 +17,22 @@ def book_list_view(request):
       'book_list': book_list
     }
     return render(request, template_name='book.html', context=context  )
+  
+def book_list(request):
+    query = request.GET.get('q')
+    if query:
+        books = Book.objects.filter(title__icontains=query)
+    else:
+        books = Book.objects.all()
+    return render(request, 'books/book_list.html', {'books': books})
+
+def book_list(request):
+    books = Book.objects.all()
+    paginator = Paginator(books, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'books/book_list.html', {'page_obj': page_obj})
+
   
 def book_detail_view(request, id):
   if request.method == 'GET':
