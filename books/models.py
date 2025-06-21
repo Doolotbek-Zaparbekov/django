@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Book(models.Model):
@@ -24,7 +24,7 @@ class Book(models.Model):
     
 class Reviews(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews', null=True, verbose_name='Книга')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор', null=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Автор', null=True)
     text = models.TextField(verbose_name='Напишите отзыв')
     mark = models.IntegerField(
         validators=[
@@ -47,7 +47,7 @@ class Reviews(models.Model):
 class NewsBook(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
     def __str__(self):

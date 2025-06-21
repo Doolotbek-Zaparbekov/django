@@ -1,19 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
-
-class Book(models.Model):
-    title = models.CharField(max_length=100, verbose_name='Название книги')
-    image = models.ImageField(upload_to='books/', verbose_name='Обложка книги')
-    description = models.TextField(verbose_name='Описание')
-    TYPE_BOOK = (
-        ('Magic realism', 'Magic realism'),
-        ('Novel', 'Novel'),
-        ('Fantasy', 'Fantasy')
-    )
-    type_book = models.CharField(max_length=20, choices=TYPE_BOOK, verbose_name='Тип книги')
-
-    def __str__(self):
-        return self.title
+from books.models import Book
 
 class Basket(models.Model):
     STATUS_CHOICES = (
