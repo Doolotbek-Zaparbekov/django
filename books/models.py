@@ -56,3 +56,11 @@ class NewsBook(models.Model):
     class Meta:
         verbose_name ='Автор'
         verbose_name_plural ='Автор'
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15)
+
+    def __str__(self):
+        return f"Профиль {self.user.username}"

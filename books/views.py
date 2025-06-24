@@ -20,18 +20,18 @@ def book_list_view(request):
   
 def book_list(request):
     query = request.GET.get('q')
-    if query:
-        books = Book.objects.filter(title__icontains=query)
-    else:
-        books = Book.objects.all()
-    return render(request, 'books/book_list.html', {'books': books})
+    books = Book.objects.filter(title__icontains=query) if query else Book.objects.all()
 
-def book_list(request):
-    books = Book.objects.all()
-    paginator = Paginator(books, 3)
+    paginator = Paginator(books, 3)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'books/book_list.html', {'page_obj': page_obj})
+
+    context = {
+        'page_obj': page_obj,
+        'query': query,
+    }
+    return render(request, 'books/book_list.html', context)
+
 
   
 def book_detail_view(request, id):
@@ -60,3 +60,5 @@ def your_view_function(request, book_id):
 def books(request):
   if request.method == 'GET':
     return HttpResponse('«Я лежал, кутаясь в свой краешек одеяла, и мне было хорошо. Я стал частью чего-то большого, многоногого и многорукого, теплого и болтливого. Я стал хвостом или рукой, а может быть даже костью. При каждом движении кружилась голова, и все равно давно уже мне не было так уютно.» Дом в котором...')
+
+
