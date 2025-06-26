@@ -11,8 +11,6 @@ urlpatterns = [
     path('', include('users.urls')),
     path('captcha/', include('captcha.urls')),
     path('books/', include('books.urls')),
-    path('gadjets/', include('gadjets.urls'))
-
-]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('gadjets/', include('gadjets.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
+  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

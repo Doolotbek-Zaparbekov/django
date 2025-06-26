@@ -1,36 +1,38 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.views.generic import CreateView, FormView, ListView, RedirectView
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm
 from .models import CustomUser
 
-def register_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('user_list')
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'users/register.html', {'form': form})
+class RegisterView(CreateView):
+    form_class = CustomUserCreationForm
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('user_list')
 
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            return redirect('user_list')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'users/login.html', {'form': form})
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return super().form_valid(form)
 
-@login_required
-def user_list(request):
-    users = CustomUser.objects.all()
-    return render(request, 'users/user_list.html', {'users': users})
+class LoginView(FormView):
+    form_class = AuthenticationForm
+    template_name = 'users/login.html'
+    success_url = reverse_lazy('user_list')
 
-def logout_view(request):
-    logout(request)
-    return redirect('login')
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        return super().form_valid(form)
+
+class LogoutView(RedirectView):
+    url = reverse_lazy('login')
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super().get(request, *args, **kwargs)
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = CustomUser
+    template_name = 'users/user_list.html'
+    context_object_name = 'users'

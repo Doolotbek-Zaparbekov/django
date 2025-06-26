@@ -57,10 +57,8 @@ class NewsBook(models.Model):
         verbose_name ='Автор'
         verbose_name_plural ='Автор'
 
-
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=15)
-
+    book = models.OneToOneField(Book, on_delete=models.CASCADE)
+    extra_info = models.TextField()
     def __str__(self):
-        return f"Профиль {self.user.username}"
+        return f"Профиль книги: {self.book.title}"

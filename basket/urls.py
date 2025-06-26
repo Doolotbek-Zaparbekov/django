@@ -1,9 +1,9 @@
 from django.urls import path
-from . import views
+from .views import BasketCreateView, BasketListView, BasketUpdateView, BasketDeleteView
 
 urlpatterns = [
-    path('basket/create/', views.create_basket_view, name='create_basket'),
-    path('', views.basket_list_view, name='basket_list'),
-    path('basket/update/<int:pk>/', views.update_basket_view, name='update_basket'),
-    path('basket/delete/<int:pk>/', views.delete_basket_view, name='delete_basket'),
+    path('basket/create/', BasketCreateView.as_view(), name='create_basket'),
+    path('', BasketListView.as_view(), name='basket_list'),
+    path('basket/update/<int:pk>/', BasketUpdateView.as_view(), name='update_basket'),
+    path('basket/delete/<int:pk>/', BasketDeleteView.as_view(), name='delete_basket'),
 ]

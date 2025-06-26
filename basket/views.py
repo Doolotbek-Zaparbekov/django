@@ -1,35 +1,26 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import Basket
 from .forms import BasketForm
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
-def create_basket_view(request):
-    if request.method == 'POST':
-        form = BasketForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('basket_list')
-    else:
-        form = BasketForm()
-    return render(request, 'basket_create.html', {'form': form})
+class BasketCreateView(CreateView):
+    model = Basket
+    form_class = BasketForm
+    template_name = 'basket_create.html'
+    success_url = reverse_lazy('basket_list')
 
-def basket_list_view(request):
-    baskets = Basket.objects.all()
-    return render(request, 'basket_list.html', {'baskets': baskets})
+class BasketListView(ListView):
+    model = Basket
+    template_name = 'basket_list.html'
+    context_object_name = 'baskets'
 
-def update_basket_view(request, pk):
-    basket = get_object_or_404(Basket, pk=pk)
-    if request.method == 'POST':
-        form = BasketForm(request.POST, instance=basket)
-        if form.is_valid():
-            form.save()
-            return redirect('basket_list')
-    else:
-        form = BasketForm(instance=basket)
-    return render(request, 'basket_update.html', {'form': form})
+class BasketUpdateView(UpdateView):
+    model = Basket
+    form_class = BasketForm
+    template_name = 'basket_update.html'
+    success_url = reverse_lazy('basket_list')
 
-def delete_basket_view(request, pk):
-    basket = get_object_or_404(Basket, pk=pk)
-    if request.method == 'POST':
-        basket.delete()
-        return redirect('basket_list')
-    return render(request, 'basket_delete.html', {'basket': basket})
+class BasketDeleteView(DeleteView):
+    model = Basket
+    template_name = 'basket_delete.html'
+    success_url = reverse_lazy('basket_list')

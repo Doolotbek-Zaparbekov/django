@@ -1,50 +1,43 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from . import models
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView
-from .models import NewsBook
-from django.db.models import Avg 
-from.models import Book
-from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from django.db.models import Avg
+from django.http import HttpResponse
+from .models import Book, NewsBook
 
+class BookListView(ListView):
+    model = Book
+    context_object_name = 'book_list'
+    template_name = 'book.html'
+    ordering = ['-id']
 
+class BookSearchListView(ListView):
+    model = Book
+    template_name = 'books/book_list.html'
+    context_object_name = 'page_obj'
+    paginate_by = 3
 
-def book_list_view(request):
-  if request.method == 'GET':
-    book_list = models.Book.objects.all().order_by('-id')
-    context = {
-      'book_list': book_list
-    }
-    return render(request, template_name='book.html', context=context  )
-  
-def book_list(request):
-    query = request.GET.get('q')
-    books = Book.objects.filter(title__icontains=query) if query else Book.objects.all()
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        return Book.objects.filter(title__icontains=query) if query else Book.objects.all()
 
-    paginator = Paginator(books, 3)  
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
 
-    context = {
-        'page_obj': page_obj,
-        'query': query,
-    }
-    return render(request, 'books/book_list.html', context)
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'book_detail.html'
+    pk_url_kwarg = 'id'
+    context_object_name = 'book_id'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['average_rating'] = self.object.reviews.aggregate(avg_mark=Avg('mark'))['avg_mark']
+        return context
 
-  
-def book_detail_view(request, id):
-  if request.method == 'GET':
-    book_id = get_object_or_404(models.Book, id=id)
-    average_rating = book_id.reviews.aggregate(avg_mark=Avg('mark'))['avg_mark']
-
-    context = {
-        'book_id': book_id,
-        'average_rating': average_rating 
-    }
-    return render(request, template_name='book_detail.html', context=context)
-  
 class NewsBookCreateView(LoginRequiredMixin, CreateView):
     model = NewsBook
     fields = ['title', 'content']
@@ -53,12 +46,11 @@ class NewsBookCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-  
-def your_view_function(request, book_id):
-    return HttpResponse(f"Вы запросили аудиозапись для книги с ID: {book_id}")
-       
-def books(request):
-  if request.method == 'GET':
-    return HttpResponse('«Я лежал, кутаясь в свой краешек одеяла, и мне было хорошо. Я стал частью чего-то большого, многоногого и многорукого, теплого и болтливого. Я стал хвостом или рукой, а может быть даже костью. При каждом движении кружилась голова, и все равно давно уже мне не было так уютно.» Дом в котором...')
+class AudioBookView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(f"Вы запросили аудиозапись для книги с ID: {kwargs['book_id']}")
 
-
+class StaticBookView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(
+            '«Я лежал, кутаясь в свой краешек одеяла... Дом в котором...»')

@@ -6,25 +6,20 @@
     <title>Фильтрация по тегам</title>
 </head>
 <body>
-    <h2>Фильтрация по тегам:</h2>
-<ul>
+    <h1>Продукты</h1>
+<div>
+    <a href="{% url 'product_list' %}">Все</a>
     {% for tag in tags %}
-        <li><a href="?tag={{ tag.name }}">#{{ tag.name }}</a></li>
+        <a href="?tag={{ tag.name }}">#{{ tag.name }}</a>
     {% endfor %}
-</ul>
-
-<h3>Список товаров:</h3>
+</div>
 <ul>
     {% for product in products %}
-        <li>
-            <strong>{{ product.name }}</strong><br>
-            {{ product.description }}<br>
-            Теги: 
-            {% for tag in product.tags.all %}
-                #{{ tag.name }} 
-            {% endfor %}
-        </li>
+        <li>{{ product.title }} — {{ product.description }}</li>
+    {% empty %}
+        <li>Нет товаров</li>
     {% endfor %}
+</ul>
 </ul>
 
 </body>
