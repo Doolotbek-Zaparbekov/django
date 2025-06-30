@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if form.instance.pk %}
+        Редактирование фильма
+    {% else %}
+        Добавить фильм
+    {% endif %}
+{% endblock %}
+{% block content %}
+<h1>
+    {% if form.instance.pk %}
+        Редактирование фильма
+    {% else %}
+        Добавить фильм
+    {% endif %}
+</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <p>{{ form.title.label_tag }} {{ form.title }}</p>
+    <p>{{ form.description.label_tag }} {{ form.description }}</p>
+    <p>{{ form.poster.label_tag }} {{ form.poster }}</p>
+    <p>{{ form.genres.label_tag }} {{ form.genres }}</p>  
+    <p>{{ form.release_date.label_tag }} {{ form.release_date }}</p>
+    <p>{{ form.rating.label_tag }} {{ form.rating }}</p>
+    <p>{{ form.tags.label_tag }} {{ form.tags }}</p>
+    <button type="submit">Сохранить</button>
+</form>
+<a href="{% url 'movie_list' %}">Отмена</a>
+{% endblock %}

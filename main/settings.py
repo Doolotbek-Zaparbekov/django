@@ -26,8 +26,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'books', 'basket','users',
-    'gadjets',
+    'cineboard',
+
+
+
 
 ]
 
@@ -110,6 +112,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Default primary key field type
@@ -119,5 +123,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-AUTH_USER_MODEL = 'users.CustomUser'
-INSTALLED_APPS += ['captcha']
+
+LOGIN_URL = 'login'                  
+LOGIN_REDIRECT_URL = 'movie_list'
+LOGOUT_REDIRECT_URL = 'login'

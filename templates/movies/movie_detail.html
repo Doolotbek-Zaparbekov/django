@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.title }}{% endblock %}
+{% block content %}
+<h1>{{ movie.title }}</h1>
+<p><strong>Жанр:</strong> {{ movie.genre.name }}</p>
+<p><strong>Дата выхода:</strong> {{ movie.release_date }}</p>
+<p><strong>Рейтинг:</strong> {{ movie.rating }}</p>
+<p><strong>Описание:</strong> {{ movie.description }}</p>
+<img src="{{ movie.poster.url }}" alt="Постер {{ movie.title }}" style="max-width: 300px;">
+{% if movie.author == user %}
+    <p>
+        <a href="{% url 'movie_edit' movie.pk %}">Изменить</a> |
+        <a href="{% url 'movie_delete' movie.pk %}">Удалить</a>
+    </p>
+{% endif %}
+<hr>
+<h3>Комментарии</h3>
+{% if comments %}
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <strong>{{ comment.author.username }}</strong> ({{ comment.created_at|date:"d.m.Y H:i" }}):<br>
+                {{ comment.content }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Комментариев пока нет.</p>
+{% endif %}
+{% if user.is_authenticated %}
+    <h4>Добавить комментарий</h4>
+    <form method="post" action="{% url 'add_comment' movie.pk %}">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+{% endif %}
+<a href="{% url 'movie_list' %}">← Назад к списку фильмов</a>
+{% endblock %}

@@ -5,12 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('bbb/', include('books.urls')),
-    path('news_book/', include('books.urls')),
-    path('basket/', include('basket.urls')),
-    path('', include('users.urls')),
-    path('captcha/', include('captcha.urls')),
-    path('books/', include('books.urls')),
-    path('gadjets/', include('gadjets.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
-  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('', include('cineboard.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
